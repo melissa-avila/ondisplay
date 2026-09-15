@@ -29,11 +29,13 @@
     <div style="font-size: 14px; letter-spacing: -0.01em; font-weight: 600;">Pulse</div>
     <div style="font-size: 12px; opacity: .6;">{{ backendLabel }}</div>
     <div style="flex: 1;"></div>
-    <div style="display: flex; gap: 4px; background: rgba(246,245,242,.1); padding: 4px; border-radius: 999px;">
-      <button onClick="{{ goAdmin }}" style="{{ tabAdminStyle }}">Admin</button>
-      <button onClick="{{ goPresent }}" style="{{ tabPresentStyle }}">Present</button>
-      <button onClick="{{ goPhone }}" style="{{ tabPhoneStyle }}">Participant</button>
-    </div>
+    <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; gap: 4px; background: rgba(246,245,242,.1); padding: 4px; border-radius: 999px;">
+        <button onClick="{{ goAdmin }}" style="{{ tabAdminStyle }}">Admin</button>
+        <button onClick="{{ goPresent }}" style="{{ tabPresentStyle }}">Present</button>
+        <button onClick="{{ goPhone }}" style="{{ tabPhoneStyle }}">Participant</button>
+      </div>
+    </sc-if>
   </div>
 
   <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
@@ -66,10 +68,14 @@
               <label style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">Session name</label>
               <input value="{{ selName }}" onChange="{{ renameSession }}" style="border: 0; border-bottom: 1px solid #DAD7CF; background: transparent; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; padding: 4px 0;" />
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 8px; align-items: center; position: relative;">
               <button onClick="{{ present }}" style="background: #2F4BFF; color: #fff; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #1B2FBF;">Present</button>
-              <button onClick="{{ exportCsv }}" style="background: transparent; border: 1px solid #14141A; border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #14141A; color: #F6F5F2;">Export CSV</button>
-              <button onClick="{{ deleteSession }}" title="Delete session" style="background: transparent; border: 1px solid #DAD7CF; border-radius: 999px; width: 40px; height: 40px; cursor: pointer; color: #6B6A64;" style-hover="border-color: #C0392B; color: #C0392B;">✕</button>
+              <button onClick="{{ toggleMenu }}" title="More actions" style="background: transparent; border: 1px solid #DAD7CF; border-radius: 999px; width: 40px; height: 40px; cursor: pointer; color: #6B6A64; font-size: 18px; line-height: 1;" style-hover="border-color: #14141A; color: #14141A;">⋯</button>
+              <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; top: 48px; right: 0; z-index: 20; background: #fff; border: 1px solid #DAD7CF; border-radius: 12px; box-shadow: 0 12px 28px rgba(20,20,26,.14); padding: 6px; min-width: 190px; display: flex; flex-direction: column;">
+                  <button onClick="{{ askDelete }}" style="text-align: left; background: transparent; border: 0; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-weight: 600; color: #C0392B; cursor: pointer;" style-hover="background: #FBEDEB;">Delete session</button>
+                </div>
+              </sc-if>
             </div>
           </div>
 
@@ -112,15 +118,19 @@
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">Answers</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">Answers</div>
+              <button onClick="{{ exportCsv }}" style="background: transparent; border: 1px solid #14141A; border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="background: #14141A; color: #F6F5F2;">Export CSV</button>
+            </div>
             <sc-if value="{{ hasAnswers }}" hint-placeholder-val="{{ true }}">
               <div style="border: 1px solid #DAD7CF; border-radius: 12px; overflow: hidden; background: #fff;">
-                <div style="display: grid; grid-template-columns: 160px minmax(0, 1fr) 150px; gap: 12px; padding: 10px 14px; background: #EDEBE6; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">
-                  <div>Name</div><div>Answer</div><div>Received</div>
+                <div style="display: grid; grid-template-columns: 130px minmax(0, 0.9fr) minmax(0, 1.1fr) 130px; gap: 12px; padding: 10px 14px; background: #EDEBE6; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">
+                  <div>Name</div><div>Question</div><div>Answer</div><div>Received</div>
                 </div>
                 <sc-for list="{{ answerRows }}" as="r" hint-placeholder-count="3">
-                  <div style="display: grid; grid-template-columns: 160px minmax(0, 1fr) 150px; gap: 12px; padding: 11px 14px; border-top: 1px solid #EDEBE6; font-size: 14px; align-items: start;">
+                  <div style="display: grid; grid-template-columns: 130px minmax(0, 0.9fr) minmax(0, 1.1fr) 130px; gap: 12px; padding: 11px 14px; border-top: 1px solid #EDEBE6; font-size: 14px; align-items: start;">
                     <div style="font-weight: 600;">{{ r.name }}</div>
+                    <div style="color: #6B6A64; font-size: 13px; line-height: 1.4;"><span style="font-weight: 600; color: #14141A;">{{ r.qNum }}</span> {{ r.qText }}</div>
                     <div style="color: #3C3B35; line-height: 1.4;">{{ r.text }}</div>
                     <div style="color: #9A988F; font-size: 12px; font-variant-numeric: tabular-nums;">{{ r.when }}</div>
                   </div>
@@ -137,6 +147,19 @@
 
       <sc-if value="{{ noSelection }}" hint-placeholder-val="{{ false }}">
         <div style="border: 1px dashed #DAD7CF; border-radius: 18px; padding: 60px; text-align: center; color: #9A988F;">Select or create a session.</div>
+      </sc-if>
+
+      <sc-if value="{{ confirmDelete }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; inset: 0; z-index: 50; background: rgba(20,20,26,.4); display: flex; align-items: center; justify-content: center; padding: 24px;">
+          <div style="background: #F6F5F2; border-radius: 18px; padding: 28px; max-width: 420px; width: 100%; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 24px 60px rgba(20,20,26,.3);">
+            <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.015em;">Delete this session?</div>
+            <div style="font-size: 15px; color: #3C3B35; line-height: 1.5;">{{ deleteWarning }}</div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end; padding-top: 6px;">
+              <button onClick="{{ cancelDelete }}" style="background: transparent; border: 1px solid #DAD7CF; border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="border-color: #14141A;">Cancel</button>
+              <button onClick="{{ confirmDeleteNow }}" style="background: #C0392B; color: #fff; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #9C2D22;">Delete session</button>
+            </div>
+          </div>
+        </div>
       </sc-if>
 
     </div>
@@ -193,27 +216,30 @@
 
       <div style="display: flex; align-items: center; gap: 12px; padding-top: 20px;">
         <button onClick="{{ prevQuestion }}" style="{{ prevStyle }}">←</button>
-        <button onClick="{{ goAdmin }}" style="background: #F0EFEB; border: 0; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; gap: 8px; align-items: center;" style-hover="background: #E4E2DC;">End presentation</button>
         <div style="flex: 1;"></div>
         <div style="font-size: 14px; color: #9A988F; font-variant-numeric: tabular-nums;">{{ questionPosition }}</div>
         <div style="flex: 1;"></div>
         <button onClick="{{ nextQuestion }}" style="{{ nextStyle }}">Next question →</button>
+        <button onClick="{{ goAdmin }}" style="background: #F0EFEB; border: 0; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="background: #E4E2DC;">End presentation</button>
       </div>
     </div>
   </sc-if>
 
   <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 36px 20px 60px;">
-      <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #6B6A64;">
-        <span>Simulated scan of code</span>
-        <input value="{{ scanCode }}" onChange="{{ setScanCode }}" style="width: 110px; border: 1px solid #DAD7CF; border-radius: 8px; padding: 6px 10px; background: #F6F5F2; font-variant-numeric: tabular-nums; letter-spacing: .04em;" />
-      </div>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 0 0 40px;">
+      <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #6B6A64; padding-top: 24px;">
+          <span>Simulated scan of code</span>
+          <input value="{{ scanCode }}" onChange="{{ setScanCode }}" style="width: 110px; border: 1px solid #DAD7CF; border-radius: 8px; padding: 6px 10px; background: #F6F5F2; font-variant-numeric: tabular-nums; letter-spacing: .04em;" />
+        </div>
+      </sc-if>
 
-      <div style="width: 390px; max-width: 100%; background: #14141A; border-radius: 42px; padding: 10px; box-shadow: 0 30px 60px rgba(20,20,26,.25);">
-        <div style="background: #F6F5F2; border-radius: 34px; overflow: hidden; min-height: 660px; display: flex; flex-direction: column;">
-          <div style="padding: 14px 20px 10px; display: flex; justify-content: space-between; font-size: 12px; color: #9A988F; font-variant-numeric: tabular-nums;">
-            <span>9:41</span><span>{{ joinHost }}</span>
-          </div>
+      <div style="width: 100%; max-width: 480px; flex: 1; display: flex;">
+        <div style="background: #F6F5F2; flex: 1; display: flex; flex-direction: column; min-height: 78vh;">
+
+          <sc-if value="{{ phoneLoading }}" hint-placeholder-val="{{ false }}">
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; color: #9A988F; font-size: 15px;">Connecting…</div>
+          </sc-if>
 
           <sc-if value="{{ codeInvalid }}" hint-placeholder-val="{{ false }}">
             <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 32px; text-align: center;">
@@ -313,7 +339,11 @@ class Component extends DCLogic {
     phoneName: "",
     phoneSessionId: null,
     answerDraft: "",
-    justSent: false
+    justSent: false,
+    lastAnsweredQid: null,
+    kiosk: false,
+    menuOpen: false,
+    confirmDelete: false
   };
 
   // ---- Supabase REST helpers -------------------------------------------------
@@ -368,7 +398,7 @@ class Component extends DCLogic {
     const scanned = m ? m[1] : null;
 
     if (sbConfig()) {
-      this.setState({ scanCode: scanned || "", view: scanned ? "phone" : "admin", remote: true });
+      this.setState({ scanCode: scanned || "", view: scanned ? "phone" : "admin", remote: true, kiosk: !!scanned });
       this.loadRemote().then(async (sessions) => {
         if (!sessions.length) {
           const s = seed()[0];
@@ -381,6 +411,7 @@ class Component extends DCLogic {
         }
         this.setState({
           sessions,
+          loaded: true,
           selectedId: sessions[0] ? sessions[0].id : null,
           scanCode: scanned || (sessions[0] ? sessions[0].code : "")
         });
@@ -398,7 +429,9 @@ class Component extends DCLogic {
       sessions,
       selectedId: first.id,
       scanCode: scanned || first.code,
-      view: scanned ? "phone" : "admin"
+      view: scanned ? "phone" : "admin",
+      kiosk: !!scanned,
+      loaded: true
     });
     this._onStorage = (e) => {
       if (e.key !== KEY || !e.newValue) return;
@@ -530,8 +563,9 @@ class Component extends DCLogic {
       backendLabel: st.backendError
         ? "Supabase error — " + st.backendError.slice(0, 80)
         : (sbConfig() ? "live · synced via Supabase" : "local only · data stays in this browser"),
-      isAdmin: st.view === "admin",
-      isPresent: st.view === "present",
+      showChrome: !st.kiosk,
+      isAdmin: st.view === "admin" && !st.kiosk,
+      isPresent: st.view === "present" && !st.kiosk,
       isPhone: st.view === "phone",
       goAdmin: () => this.setState({ view: "admin" }),
       goPresent: () => this.setState({ view: "present" }),
@@ -580,11 +614,20 @@ class Component extends DCLogic {
         this.setState({ selectedId: s.id, scanCode: s.code });
       },
       renameSession: (e) => this.update(sel.id, (s) => ({ ...s, name: e.target.value })),
-      deleteSession: () => {
+      menuOpen: st.menuOpen,
+      toggleMenu: () => this.setState({ menuOpen: !st.menuOpen }),
+      askDelete: () => this.setState({ menuOpen: false, confirmDelete: true }),
+      cancelDelete: () => this.setState({ confirmDelete: false }),
+      confirmDelete: st.confirmDelete,
+      deleteWarning: sel
+        ? '"' + sel.name + '" and its ' + sel.responses.length + " collected " +
+          (sel.responses.length === 1 ? "answer" : "answers") + " will be permanently deleted. Export the CSV first if you need the data. This cannot be undone."
+        : "",
+      confirmDeleteNow: () => {
         const rest = st.sessions.filter((s) => s.id !== sel.id);
         if (sbConfig()) this.remoteWrite(this.sb("sessions?id=eq." + sel.id, { method: "DELETE", prefer: "return=minimal" }));
         this.persist(rest);
-        this.setState({ selectedId: rest.length ? rest[0].id : null });
+        this.setState({ selectedId: rest.length ? rest[0].id : null, confirmDelete: false });
       },
       rotateCode: () => {
         const code = makeCode();
@@ -629,11 +672,16 @@ class Component extends DCLogic {
 
       hasAnswers: !!(sel && sel.responses.length),
       noAnswers: !!(sel && !sel.responses.length),
-      answerRows: sel ? sel.responses.slice().reverse().map((r) => ({
-        name: r.name,
-        text: r.text,
-        when: new Date(r.ts).toLocaleString()
-      })) : [],
+      answerRows: sel ? sel.responses.slice().reverse().map((r) => {
+        const qi = sel.questions.findIndex((q) => q.id === r.qid);
+        return {
+          name: r.name,
+          text: r.text,
+          qNum: qi >= 0 ? "Q" + (qi + 1) : "—",
+          qText: qi >= 0 ? sel.questions[qi].text : "Deleted question",
+          when: new Date(r.ts).toLocaleString()
+        };
+      }) : [],
 
       activeQuestionText: (st.view === "phone" ? (phoneQ ? phoneQ.text : "") : (sq ? sq.text : "No questions yet")),
       liveAnswers: liveResponses.map((r) => ({ name: showNames ? r.name : "Anonymous", text: r.text })),
@@ -651,8 +699,9 @@ class Component extends DCLogic {
 
       scanCode: st.scanCode,
       setScanCode: (e) => this.setState({ scanCode: e.target.value, phoneSessionId: null, phoneName: "", justSent: false }),
-      codeInvalid: !phoneSess,
-      needsName: !!phoneSess && !joined,
+      phoneLoading: !st.loaded,
+      codeInvalid: !!st.loaded && !phoneSess,
+      needsName: !!st.loaded && !!phoneSess && !joined,
       phoneSessionName: phoneSess ? phoneSess.name : "",
       nameDraft: st.nameDraft,
       setNameDraft: (e) => this.setState({ nameDraft: e.target.value }),
@@ -674,8 +723,8 @@ class Component extends DCLogic {
         this.setState({ phoneName: n, phoneSessionId: phoneSess.id, nameDraft: "" });
       },
 
-      phoneAnswering: joined && !st.justSent,
-      phoneWaiting: joined && st.justSent,
+      phoneAnswering: joined && !(st.justSent && phoneQ && st.lastAnsweredQid === phoneQ.id),
+      phoneWaiting: joined && !!(st.justSent && phoneQ && st.lastAnsweredQid === phoneQ.id),
       phoneName: st.phoneName,
       answerDraft: st.answerDraft,
       setAnswerDraft: (e) => this.setState({ answerDraft: e.target.value }),
@@ -694,7 +743,7 @@ class Component extends DCLogic {
         this.persist(st.sessions.map((s) => (s.id === phoneSess.id
           ? { ...s, responses: [...s.responses, { id: uid(), qid: phoneQ.id, name: st.phoneName, text: t, ts: Date.now() }] }
           : s)));
-        this.setState({ answerDraft: "", justSent: true });
+        this.setState({ answerDraft: "", justSent: true, lastAnsweredQid: phoneQ.id });
       },
       answerAgain: () => this.setState({ justSent: false }),
       hasMine: mine.length > 0,
