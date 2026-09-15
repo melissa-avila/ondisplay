@@ -4,6 +4,6 @@
 //   anonKey = "anon public" key  (safe to ship in the browser)
 // Leave both empty to keep running in local-only mode (data stays in this browser).
 window.SUPABASE = {
-  url: "",
-  anonKey: ""
+  url: "https://dvisiijcseohjakunphn.supabase.co",
+  anonKey: "sb_publishable_K2-eMnl7u3IZbqI8jPw8Qg_YsNI9LMs"
 };
