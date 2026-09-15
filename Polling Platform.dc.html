@@ -27,7 +27,9 @@
 
   <div style="display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: #14141A; color: #F6F5F2; position: sticky; top: 0; z-index: 30;">
     <div style="font-size: 14px; letter-spacing: -0.01em; font-weight: 600;">Pulse</div>
-    <div style="font-size: 12px; opacity: .6;">{{ backendLabel }}</div>
+    <sc-if value="{{ showBackendLabel }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size: 12px; opacity: .6;">{{ backendLabel }}</div>
+    </sc-if>
     <div style="flex: 1;"></div>
     <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
       <div style="display: flex; gap: 4px; background: rgba(246,245,242,.1); padding: 4px; border-radius: 999px;">
@@ -123,19 +125,19 @@
               <button onClick="{{ exportCsv }}" style="background: transparent; border: 1px solid #14141A; border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="background: #14141A; color: #F6F5F2;">Export CSV</button>
             </div>
             <sc-if value="{{ hasAnswers }}" hint-placeholder-val="{{ true }}">
-              <div style="border: 1px solid #DAD7CF; border-radius: 12px; overflow: hidden; background: #fff;">
-                <div style="display: grid; grid-template-columns: 130px minmax(0, 0.9fr) minmax(0, 1.1fr) 130px; gap: 12px; padding: 10px 14px; background: #EDEBE6; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">
+              <div style="border: 1px solid #DAD7CF; border-radius: 12px; overflow-x: auto; background: #fff;"><div style="min-width: 560px;">
+                <div style="display: grid; grid-template-columns: minmax(80px, 110px) minmax(130px, 0.9fr) minmax(150px, 1.2fr) minmax(76px, auto); gap: 12px; padding: 10px 14px; background: #EDEBE6; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #6B6A64;">
                   <div>Name</div><div>Question</div><div>Answer</div><div>Received</div>
                 </div>
                 <sc-for list="{{ answerRows }}" as="r" hint-placeholder-count="3">
-                  <div style="display: grid; grid-template-columns: 130px minmax(0, 0.9fr) minmax(0, 1.1fr) 130px; gap: 12px; padding: 11px 14px; border-top: 1px solid #EDEBE6; font-size: 14px; align-items: start;">
+                  <div style="display: grid; grid-template-columns: minmax(80px, 110px) minmax(130px, 0.9fr) minmax(150px, 1.2fr) minmax(76px, auto); gap: 12px; padding: 11px 14px; border-top: 1px solid #EDEBE6; font-size: 14px; align-items: start;">
                     <div style="font-weight: 600;">{{ r.name }}</div>
                     <div style="color: #6B6A64; font-size: 13px; line-height: 1.4;"><span style="font-weight: 600; color: #14141A;">{{ r.qNum }}</span> {{ r.qText }}</div>
                     <div style="color: #3C3B35; line-height: 1.4;">{{ r.text }}</div>
                     <div style="color: #9A988F; font-size: 12px; font-variant-numeric: tabular-nums;">{{ r.when }}</div>
                   </div>
                 </sc-for>
-              </div>
+              </div></div>
             </sc-if>
             <sc-if value="{{ noAnswers }}" hint-placeholder-val="{{ false }}">
               <div style="border: 1px dashed #DAD7CF; border-radius: 12px; padding: 24px; text-align: center; color: #9A988F; font-size: 14px;">No answers yet. Open the Participant view to submit one.</div>
@@ -183,9 +185,9 @@
 
         <div style="display: flex; flex-direction: column; gap: 36px; min-width: 0;">
           <div style="font-family: 'Sofia Pro', 'SofiaPro', Inter, system-ui, sans-serif; font-size: 52px; font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; text-wrap: pretty;">{{ activeQuestionText }}</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start;">
+          <div style="columns: 300px 3; column-gap: 14px;">
             <sc-for list="{{ liveAnswers }}" as="a" hint-placeholder-count="2">
-              <div style="background: #F0EFEB; border-radius: 16px; padding: 14px 18px; max-width: 420px; display: flex; flex-direction: column; gap: 5px; animation: pop .35s ease both;">
+              <div style="background: #F0EFEB; border-radius: 16px; padding: 14px 18px; margin: 0 0 14px; break-inside: avoid; display: flex; flex-direction: column; gap: 5px; animation: pop .35s ease both;">
                 <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: #8C8A82; font-weight: 600;">{{ a.name }}</div>
                 <div style="font-size: 19px; line-height: 1.35; color: #14141A; text-wrap: pretty;">{{ a.text }}</div>
               </div>
@@ -214,13 +216,20 @@
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px; padding-top: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; padding-top: 24px;">
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: #9A988F; white-space: nowrap;">Add on their behalf</div>
+        <input value="{{ presenterDraft }}" onChange="{{ setPresenterDraft }}" onKeyDown="{{ presenterKeyDown }}" maxLength="250" placeholder="Type a shouted-out answer, press Enter" style="flex: 1; min-width: 0; border: 1px solid #DAD7CF; border-radius: 999px; padding: 12px 18px; font-size: 16px; background: #fff;" />
+        <div style="font-size: 12px; color: #B4B2AA; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ presenterRemaining }}</div>
+        <button onClick="{{ addPresenterAnswer }}" style="{{ presenterAddStyle }}">Add answer</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px;">
         <button onClick="{{ prevQuestion }}" style="{{ prevStyle }}">←</button>
         <div style="flex: 1;"></div>
         <div style="font-size: 14px; color: #9A988F; font-variant-numeric: tabular-nums;">{{ questionPosition }}</div>
         <div style="flex: 1;"></div>
         <button onClick="{{ nextQuestion }}" style="{{ nextStyle }}">Next question →</button>
-        <button onClick="{{ goAdmin }}" style="background: #F0EFEB; border: 0; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="background: #E4E2DC;">End presentation</button>
+        <button onClick="{{ endPresentation }}" style="background: #F0EFEB; border: 0; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="background: #E4E2DC;">End presentation</button>
       </div>
     </div>
   </sc-if>
@@ -239,6 +248,14 @@
 
           <sc-if value="{{ phoneLoading }}" hint-placeholder-val="{{ false }}">
             <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; color: #9A988F; font-size: 15px;">Connecting…</div>
+          </sc-if>
+
+          <sc-if value="{{ phoneEnded }}" hint-placeholder-val="{{ false }}">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 32px 26px; text-align: center;">
+              <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25;">That's a wrap</div>
+              <div style="font-size: 16px; color: #6B6A64; line-height: 1.5;">Thanks for joining, {{ phoneName }} — the presentation has ended. You can close this tab.</div>
+              <div style="font-size: 14px; color: #B4B2AA; line-height: 1.5;">If a new question is added, it will appear here automatically.</div>
+            </div>
           </sc-if>
 
           <sc-if value="{{ codeInvalid }}" hint-placeholder-val="{{ false }}">
@@ -265,7 +282,8 @@
                 <span>{{ questionPosition }}</span>
               </div>
               <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; text-wrap: pretty;">{{ activeQuestionText }}</div>
-              <textarea value="{{ answerDraft }}" onChange="{{ setAnswerDraft }}" placeholder="Type your answer…" style="border: 1px solid #DAD7CF; border-radius: 14px; padding: 14px 16px; font-size: 17px; line-height: 1.4; min-height: 150px; background: #fff;"></textarea>
+              <textarea value="{{ answerDraft }}" onChange="{{ setAnswerDraft }}" maxLength="250" placeholder="Type your answer…" style="border: 1px solid #DAD7CF; border-radius: 14px; padding: 14px 16px; font-size: 17px; line-height: 1.4; min-height: 150px; background: #fff;"></textarea>
+              <div style="font-size: 12px; color: #9A988F; text-align: right; font-variant-numeric: tabular-nums;">{{ answerRemaining }}</div>
               <button onClick="{{ submitAnswer }}" style="{{ submitStyle }}">Submit</button>
               <div style="flex: 1;"></div>
               <sc-if value="{{ hasMine }}" hint-placeholder-val="{{ false }}">
@@ -298,6 +316,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2F4BFF&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2F4BFF&quot;,&quot;#14141A&quot;,&quot;#0F7B5A&quot;,&quot;#C2410C&quot;]},&quot;showParticipantNames&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">
 const KEY = "pulse.sessions.v1";
+const MAX_ANSWER = 250;
 const HOST = "pulse.app";
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
@@ -514,8 +533,23 @@ class Component extends DCLogic {
 
   activeQuestion(sess) {
     if (!sess || !sess.questions.length) return null;
+    if ((sess.activeIndex || 0) < 0) return null; // -1 == presentation ended
     const i = Math.min(sess.activeIndex || 0, sess.questions.length - 1);
     return sess.questions[i];
+  }
+
+  addAnswer(sess, q, name, text) {
+    const t = String(text || "").trim().slice(0, MAX_ANSWER);
+    if (!t || !sess || !q) return;
+    if (sbConfig()) {
+      this.remoteWrite(this.sb("responses", {
+        method: "POST", prefer: "return=minimal",
+        body: { session_id: sess.id, question_id: q.id, name: name, body: t }
+      }));
+    }
+    this.persist(this.state.sessions.map((s) => (s.id === sess.id
+      ? { ...s, responses: [...s.responses, { id: uid(), qid: q.id, name: name, text: t, ts: Date.now() }] }
+      : s)));
   }
 
   exportCsv = () => {
@@ -570,7 +604,34 @@ class Component extends DCLogic {
       goAdmin: () => this.setState({ view: "admin" }),
       goPresent: () => this.setState({ view: "present" }),
       goPhone: () => this.setState({ view: "phone" }),
-      present: () => this.setState({ view: "present" }),
+      present: () => {
+        if (sel && (sel.activeIndex || 0) < 0) this.update(sel.id, (s) => ({ ...s, activeIndex: 0 }));
+        this.setState({ view: "present" });
+      },
+      endPresentation: () => {
+        if (sel) this.update(sel.id, (s) => ({ ...s, activeIndex: -1 }));
+        this.setState({ view: "admin" });
+      },
+      showBackendLabel: st.view !== "phone",
+      presenterDraft: st.presenterDraft || "",
+      presenterRemaining: MAX_ANSWER - (st.presenterDraft || "").length,
+      setPresenterDraft: (e) => this.setState({ presenterDraft: e.target.value.slice(0, MAX_ANSWER) }),
+      presenterKeyDown: (e) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        if (!sq) return;
+        this.addAnswer(sel, sq, "Presenter", st.presenterDraft);
+        this.setState({ presenterDraft: "" });
+      },
+      addPresenterAnswer: () => {
+        if (!sq || !(st.presenterDraft || "").trim()) return;
+        this.addAnswer(sel, sq, "Presenter", st.presenterDraft);
+        this.setState({ presenterDraft: "" });
+      },
+      presenterAddStyle: "border: 0; border-radius: 999px; padding: 12px 20px; font-size: 15px; font-weight: 600; white-space: nowrap; background: " +
+        ((st.presenterDraft || "").trim() && sq ? accent : "#F0EFEB") + "; color: " +
+        ((st.presenterDraft || "").trim() && sq ? "#fff" : "#B4B2AA") + "; cursor: " +
+        ((st.presenterDraft || "").trim() && sq ? "pointer" : "default") + ";",
       tabAdminStyle: tab(st.view === "admin"),
       tabPresentStyle: tab(st.view === "present"),
       tabPhoneStyle: tab(st.view === "phone"),
@@ -668,7 +729,11 @@ class Component extends DCLogic {
           activeIndex: 0
         }))
       })) : [],
-      addQuestion: () => this.update(sel.id, (s) => ({ ...s, questions: [...s.questions, { id: uid(), text: "" }] })),
+      addQuestion: () => this.update(sel.id, (s) => {
+        const questions = [...s.questions, { id: uid(), text: "" }];
+        // adding a question re-opens an ended session and jumps participants to it
+        return { ...s, questions, activeIndex: (s.activeIndex || 0) < 0 ? questions.length - 1 : s.activeIndex };
+      }),
 
       hasAnswers: !!(sel && sel.responses.length),
       noAnswers: !!(sel && !sel.responses.length),
@@ -679,7 +744,7 @@ class Component extends DCLogic {
           text: r.text,
           qNum: qi >= 0 ? "Q" + (qi + 1) : "—",
           qText: qi >= 0 ? sel.questions[qi].text : "Deleted question",
-          when: new Date(r.ts).toLocaleString()
+          when: new Date(r.ts).toLocaleString(undefined, { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" })
         };
       }) : [],
 
@@ -700,8 +765,10 @@ class Component extends DCLogic {
       scanCode: st.scanCode,
       setScanCode: (e) => this.setState({ scanCode: e.target.value, phoneSessionId: null, phoneName: "", justSent: false }),
       phoneLoading: !st.loaded,
+      phoneEnded: !!st.loaded && !!phoneSess && (phoneSess.activeIndex || 0) < 0,
       codeInvalid: !!st.loaded && !phoneSess,
-      needsName: !!st.loaded && !!phoneSess && !joined,
+      answerRemaining: (MAX_ANSWER - st.answerDraft.length) + " / " + MAX_ANSWER,
+      needsName: !!st.loaded && !!phoneSess && !joined && (phoneSess.activeIndex || 0) >= 0,
       phoneSessionName: phoneSess ? phoneSess.name : "",
       nameDraft: st.nameDraft,
       setNameDraft: (e) => this.setState({ nameDraft: e.target.value }),
@@ -723,26 +790,18 @@ class Component extends DCLogic {
         this.setState({ phoneName: n, phoneSessionId: phoneSess.id, nameDraft: "" });
       },
 
-      phoneAnswering: joined && !(st.justSent && phoneQ && st.lastAnsweredQid === phoneQ.id),
-      phoneWaiting: joined && !!(st.justSent && phoneQ && st.lastAnsweredQid === phoneQ.id),
+      phoneAnswering: joined && !!phoneQ && !(st.justSent && st.lastAnsweredQid === phoneQ.id),
+      phoneWaiting: joined && !!phoneQ && !!(st.justSent && st.lastAnsweredQid === phoneQ.id),
       phoneName: st.phoneName,
       answerDraft: st.answerDraft,
-      setAnswerDraft: (e) => this.setState({ answerDraft: e.target.value }),
+      setAnswerDraft: (e) => this.setState({ answerDraft: e.target.value.slice(0, MAX_ANSWER) }),
       submitStyle: "border: 0; border-radius: 999px; padding: 15px 20px; font-size: 16px; font-weight: 600; background: " +
         (st.answerDraft.trim() ? accent : "#DAD7CF") + "; color: " + (st.answerDraft.trim() ? "#fff" : "#9A988F") +
         "; cursor: " + (st.answerDraft.trim() ? "pointer" : "default") + ";",
       submitAnswer: () => {
         const t = st.answerDraft.trim();
         if (!t || !phoneSess || !phoneQ) return;
-        if (sbConfig()) {
-          this.remoteWrite(this.sb("responses", {
-            method: "POST", prefer: "return=minimal",
-            body: { session_id: phoneSess.id, question_id: phoneQ.id, name: st.phoneName, body: t }
-          }));
-        }
-        this.persist(st.sessions.map((s) => (s.id === phoneSess.id
-          ? { ...s, responses: [...s.responses, { id: uid(), qid: phoneQ.id, name: st.phoneName, text: t, ts: Date.now() }] }
-          : s)));
+        this.addAnswer(phoneSess, phoneQ, st.phoneName, t);
         this.setState({ answerDraft: "", justSent: true, lastAnsweredQid: phoneQ.id });
       },
       answerAgain: () => this.setState({ justSent: false }),
